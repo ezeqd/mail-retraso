@@ -16,13 +16,12 @@ $sqlQuery.= "        LEFT JOIN notices AS notices_s ON bulletin_notice = notices
 $sqlQuery.= "        docs_type, docs_section, docs_location, pret,empr ";
 $sqlQuery.= "WHERE ";
 $sqlQuery.= " expl_typdoc = idtyp_doc and pret_idexpl = expl_id  and empr.id_empr = pret.pret_idempr  and expl_section = idsection and expl_location = idlocation";
-$sqlQuery.= " and pret_retour < curdate() order by pret_retour, empr_nom, empr_prenom limit 2;";
+$sqlQuery.= " and pret_retour < curdate() order by pret_retour, empr_nom, empr_prenom;";
 
 $query = $dbHandler->prepare($sqlQuery);
 $query->execute();
 $mailingList = $query->fetchAll(PDO::FETCH_OBJ);
 
-//$mailingList = array('ezequiel.domenech@gmail.com', 'cristian@braintly.com', 'cristianclasasadonte@gmail.com');
 if(isset($mailingList)){
     foreach ($mailingList as $user) {
         $userMail = $user->empr_mail;
