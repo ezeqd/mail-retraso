@@ -26,6 +26,7 @@ class Mailer {
         $this->mail->Port = 587;
         $this->mail->Username = '4dm1ntpeweb2@gmail.com';
         $this->mail->Password = 'securepass';
+        $this->mail->CharSet    = "UTF-8";
         // Recipients
         $this->mail->setFrom('4dm1ntpeweb2@gmail.com', 'Administrador PMB');
         $this->mail->addAddress($receiver);
@@ -35,7 +36,6 @@ class Mailer {
     }
 
     public function sendMail(){
-        $this->mail->send();
         $error = null;
         if (!$this->mail->send()) {
             $error = $this->mail->ErrorInfo;

@@ -5,7 +5,7 @@ $dbHandler = new PDO('mysql:host=localhost;'.'dbname=pmblatu2;charset=utf8', 'ro
 
 $sqlQuery = "SELECT date_format(pret_date, '%d/%m/%Y') as aff_pret_date, ";
 $sqlQuery.= " date_format(pret_retour, '%d/%m/%Y') as aff_pret_retour, ";
-$sqlQuery.= " IF(pret_retour=CURDATE()+365,1,0) as retard, ";
+$sqlQuery.= " DATEDIFF(curdate(), pret_retour) as retard, ";
 $sqlQuery.= " id_empr, empr_nom, empr_prenom, empr_mail, id_empr, empr_cb, expl_cote,";
 $sqlQuery.= " notices_m.notice_id as m_id, notices_s.notice_id as s_id, expl_cb, expl_notice,tdoc_libelle, section_libelle, location_libelle, ";
 $sqlQuery.= " expl_bulletin, notices_m.notice_id as idnot, trim(concat(ifnull(notices_m.tit1,''),";
@@ -28,9 +28,14 @@ if(isset($mailingList)){
         if ($userMail){
             $receiver = $userMail;
             $subject = "Documentos atrasados: " . $user->tit;
+            
             $body = "Estimado usuario/a,";
             $body.= "\nSegún nuestros registros usted posee en préstamo los siguientes documentos cuyo plazo de devolución ha vencido: \n";
-            $body.= "\n" . $user->tit . "\n";
+            $body.= "\nTítulo: " . $user->tit;
+            $body.= "\nTipo de material : " . $user->tdoc_libelle;
+            $body.= "\nCod. de Barras: " . $user->expl_cb;
+            $body.= "\nSe debió devolver: " . $user->aff_pret_retour;
+            $body.= "\nDias de atraso a la fecha de esta notificación: " . $user->retard . "\n";
             $body.= "\nLe agradecemos que se ponga en contacto con nosotros para renovarlos o devolverlos." . "\n";
             $body.= "\nCentro de Información Técnica ";
             $body.= "\nTel. 2601 37 24 int. 1314, 1350";
@@ -38,15 +43,18 @@ if(isset($mailingList)){
             $body.= "\nMontevideo-Uruguay";
             $body.= "\nditec@latu.org.uy";
 
+            wordwrap($body, 70, "\r\n", TRUE);
+
             $mail = new Mailer($receiver, $subject, $body);
-            $error = $mail->sendMail();
-            if (empty($error)){
-                echo "se envió ";
-            } else {
-                echo "no se envió ";
+            $mail->sendMail();
+            $msg = "Message to " . $userMail . " has been sent.\n";
+            if (!$mail) { 
+                $msg = "Mailer Error: " . $mail->ErrorInfo . "\n";
             }
-        } else {
-            echo "ERROR user vacio";
+            $fp = fopen("/tmp/mailer_log","a");
+            fwrite($fp, $msg);
+            fclose($fp);
         }
     }
 }
+?>
