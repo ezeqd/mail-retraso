@@ -1,7 +1,13 @@
 <?php
+/**
+ * Modulo de envío de mails. Se encarga de enviar mails de manera automática todos los usuarios
+ * que registren atrasos en la devolución de libros o documentos.
+ * Este modulo también se encarga de registrar los posibles errores en 
+ * un archivo ubicado en '/tmp/mailer_log'.
+ */
 require_once "includes/Mailer.php";
 
-$dbHandler = new PDO('mysql:host=localhost;'.'dbname=pmblatu2;charset=utf8', 'root', 'ezequiel');
+$dbHandler = new PDO('mysql:host=localhost;'.'dbname=cristian;charset=utf8', 'root', 'vmware123');
 
 $sqlQuery = "SELECT date_format(pret_date, '%d/%m/%Y') as aff_pret_date, ";
 $sqlQuery.= " date_format(pret_retour, '%d/%m/%Y') as aff_pret_retour, ";
@@ -46,10 +52,13 @@ if(isset($mailingList)){
             wordwrap($body, 70, "\r\n", TRUE);
 
             $mail = new Mailer($receiver, $subject, $body);
-            $mail->sendMail();
-            $msg = "Message to " . $userMail . " has been sent.\n";
-            if (!$mail) { 
-                $msg = "Mailer Error: " . $mail->ErrorInfo . "\n";
+
+            $error = $mail->sendMail();
+            if (empty($error)) {
+                $msg = "Mensaje a " . $userMail . " ha sido enviado.\n";
+            } else {
+                $msg = "Mailer Error: " . $error . "\n";
+                $msg.= "Mensaje a " . $userMail . " NO ha sido enviado." . " UserID: " . $user->id_empr . "\n";
             }
             $fp = fopen("/tmp/mailer_log","a");
             fwrite($fp, $msg);

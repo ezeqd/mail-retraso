@@ -5,11 +5,12 @@
  * de la biblioteca
  */
 
-require_once "PHPMailer/PHPMailer.php";
-require_once "PHPMailer/SMTP.php";
+//SMTP needs accurate times, and the PHP time zone MUST be set
+//This should be done in your php.ini, but this is how to do it if you don't have access to that
+date_default_timezone_set('Etc/UTC');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
+require_once "PHPMailer/class.phpmailer.php";
+require_once "PHPMailer/class.smtp.php";
 
 class Mailer {
     private $mail; 
@@ -18,21 +19,26 @@ class Mailer {
         $this->mail = new PHPMailer();
         // Server settings
         $this->mail->isSMTP();
-        $this->mail->SMTPDebug = SMTP::DEBUG_OFF;
-                       // SMTP::DEBUG_OFF = off (for production use)
-        $this->mail->Host = 'smtp.gmail.com';
+        $this->mail->SMTPDebug = 0;
+        //Enable SMTP debugging
+        // 0 = off (for production use)
+        // 1 = client messages
+        // 2 = client and server messages
+        $this->mail->Debugoutput = "html";
+        //Ask for HTML-friendly debug output
+        $this->mail->Host = "smtp.gmail.com";
         $this->mail->SMTPAuth = true;
-        $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $this->mail->SMTPSecure = "tls";
         $this->mail->Port = 587;
         $this->mail->Username = '4dm1ntpeweb2@gmail.com';
-        $this->mail->Password = 'securepass';
+        $this->mail->Password = 'passmailer';
         $this->mail->CharSet    = "UTF-8";
         // Recipients
         $this->mail->setFrom('4dm1ntpeweb2@gmail.com', 'Administrador PMB');
         $this->mail->addAddress($receiver);
         // Content
         $this->setBody($body);
-        $this-> setSubject($subject);
+        $this->setSubject($subject);
     }
 
     public function sendMail(){
