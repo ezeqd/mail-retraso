@@ -19,7 +19,7 @@ class Mailer {
         $this->mail = new PHPMailer();
         // Server settings
         $this->mail->isSMTP();
-        $this->mail->SMTPDebug = 0;
+        $this->mail->SMTPDebug = 2;
         //Enable SMTP debugging
         // 0 = off (for production use)
         // 1 = client messages
@@ -34,7 +34,7 @@ class Mailer {
         $this->mail->Password = 'passmailer';
         $this->mail->CharSet    = "UTF-8";
         // Recipients
-        $this->mail->setFrom('4dm1ntpeweb2@gmail.com', 'Administrador PMB');
+        $this->mail->setFrom('4dm1ntpeweb2@gmail.com', 'Centro de Información Técnica');
         $this->mail->addAddress($receiver);
         // Content
         $this->setBody($body);
