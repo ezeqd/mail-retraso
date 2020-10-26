@@ -30,11 +30,11 @@ class Mailer {
         $this->mail->SMTPAuth = true;
         $this->mail->SMTPSecure = "tls";
         $this->mail->Port = 587;
-        $this->mail->Username = '4dm1ntpeweb2@gmail.com';
-        $this->mail->Password = 'passmailer';
+        $this->mail->Username = 'user@gmail.com';
+        $this->mail->Password = 'password';
         $this->mail->CharSet    = "UTF-8";
         // Recipients
-        $this->mail->setFrom('4dm1ntpeweb2@gmail.com', 'Centro de Información Técnica');
+        $this->mail->setFrom('ditec@latu.org.uy', 'Centro de Información Técnica');
         $this->mail->addAddress($receiver);
         // Content
         $this->setBody($body);
